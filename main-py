@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""RISC-V Mentorship: Tower of Hanoi Implementation"""
+
+N_DISKS = 3
+ROD_NAMES = ["A", "B", "C"]
+
+Initial state: Rod A holds disks 3, 2, 1. Rods B and C are empty.
+RODS = [[N_DISKS, N_DISKS - 1, 1], [], []]
+
+=================================================================
+1. RECURSION SECTION
+=================================================================
+RISC-V NOTE: This function maps to 'jal' (Jump and Link) instructions.
+In assembly, each call requires managing the stack pointer ('sp')
+to store return addresses and arguments.
+=================================================================
+def solve_hanoi(n, source, auxiliary, target, moves):
+if n == 1:
+moves.append((source, target))
+return
+
+# Recursive call 1: Move n-1 disks to auxiliary rod
+solve_hanoi(n - 1, source, target, auxiliary, moves)
+
+# Move base disk to target
+moves.append((source, target))
+
+# Recursive call 2: Move n-1 disks from auxiliary to target
+solve_hanoi(n - 1, auxiliary, source, target, moves)
+=================================================================
+2. ITERATION SECTION
+=================================================================
+RISC-V NOTE: The 'for' loop maps to branch instructions (e.g., 'bne').
+It relies on the Branch Predictor to efficiently handle the loop
+condition without stalling the pipeline.
+=================================================================
+def run_simulation():
+moves = []
+solve_hanoi(N_DISKS, 0, 1, 2, moves)
+
+print(f"--- Simulation Start ({N_DISKS} Disks) ---")
+
+for i, (src, dst) in enumerate(moves, 1):
+disk = RODS[src].pop()
+RODS[dst].append(disk)
+
+print(f"Move {i}: Disk {disk} from {ROD_NAMES[src]} -> {ROD_NAMES[dst]}")
+print_state()
+
+print("--- Simulation End ---")
+def print_state():
+"""Simple text-based graphics."""
+for r in range(N_DISKS, 0, -1):
+line = ""
+for rod in RODS:
+line += f"[{r}] " if r in rod else " "
+print(line)
+print("A B C")
+print("==============")
+
+if name == "main":
+run_simulation()
+
+--- FINE main.py ---
